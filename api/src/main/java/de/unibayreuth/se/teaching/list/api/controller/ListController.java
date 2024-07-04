@@ -4,8 +4,12 @@ import de.unibayreuth.se.teaching.list.api.dto.ListElementDto;
 import de.unibayreuth.se.teaching.list.business.ports.ListService;
 import de.unibayreuth.se.teaching.list.business.ports.Value;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +20,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListController {
     private final ListService listService;
+    
+    // Existing GET and POST mappings
+
+    @DeleteMapping(value="/list")
+    public ResponseEntity<Object> clearList() {
+        listService.clear();  // Oder entsprechende Methode zur Liste leeren
+        return ResponseEntity.status(HttpStatus.OK).body("[]");  // Leeres JSON-Array zurückgeben
+    }
+    
 
     @GetMapping(value = "/list")
     public ResponseEntity<List<ListElementDto>> getList() {
