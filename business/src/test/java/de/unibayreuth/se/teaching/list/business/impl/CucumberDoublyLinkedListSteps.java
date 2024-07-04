@@ -39,12 +39,23 @@ public class CucumberDoublyLinkedListSteps {
         arrayFromValues = values.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
+    @Given("^a list which already contains the value (\\d+.\\d+)$")
+    public void aListWhichAlreadyContainsTheValue(double value) {
+        list.append(value);
+    }
+
     // When -----------------------------------------------------------------------
 
     @When("^I append an element with value (\\d+.\\d+)$")
     public void iAppendAnElementWithValue(double value) {
         this.value = value;
         list.append(value);
+    }
+
+    @When("^I insert an element with value (\\d+.\\d+)$")
+    public void iInsertAnElementWithValue(double value) {
+        this.value = value;
+        list.insert(value);
     }
 
     @When("^I convert the list to an array$")
@@ -61,7 +72,7 @@ public class CucumberDoublyLinkedListSteps {
 
     @Then("^the list should contain that element$")
     public void theListShouldContainThatElement() {
-        Assertions.assertArrayEquals(new double[]{value}, list.asArray());
+        Assertions.assertTrue(((List<Double>) list).contains(value));
     }
 
     @Then("^the array should contain the same elements in the same order$")
@@ -71,10 +82,21 @@ public class CucumberDoublyLinkedListSteps {
 
     @Then("^the list should contain the elements in the following order:$")
     public void theListShouldContainTheElementsInTheFollowingOrder(List<Double> values) {
-        logger.info("%s not implemented yet.".formatted(Thread.currentThread().getStackTrace()[1].getMethodName()));
+        double[] expectedArray = values.stream().mapToDouble(Double::doubleValue).toArray();
+        Assertions.assertArrayEquals(expectedArray, list.asArray());
     }
 
-    @Then("the list should contain {int} element(s)")
+    @Then("^all other elements in the list should move back and have index i\\+1$")
+    public void allOtherElementsShouldMoveBack() {
+        double[] expectedArray = new double[list.getLength()];
+        expectedArray[0] = value;
+        for (int i = 1; i < list.getLength(); i++) {
+            expectedArray[i] = arrayFromValues[i - 1];
+        }
+        Assertions.assertArrayEquals(expectedArray, list.asArray());
+    }
+
+    @Then("^the list should contain (\\d+) element\\(s\\)$")
     public void theListShouldContainElement(int count) {
         Assertions.assertEquals(count, list.getLength());
     }
